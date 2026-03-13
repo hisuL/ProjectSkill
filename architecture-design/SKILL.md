@@ -1,0 +1,287 @@
+---
+name: architecture-design
+description: Use when converting a PRD into an architecture design document through staged analysis and user-confirmed architecture decisions, before writing architecture content
+user-invocable: true
+context: fork
+agent: Plan
+---
+
+# Architecture Design
+
+将 PRD 转化为架构设计文档，但不能把这件事当成一次性文档生成任务。先分析上下文，再分块确认关键架构决策，最后再落文档。
+
+<HARD-GATE>
+Do NOT write the full architecture document immediately after reading the PRD.
+
+You MUST:
+1. enter Plan mode first
+2. read the PRD, research, referenced docs, and referenced images
+3. confirm each major architecture decision with the user in stages
+4. write the document only after the staged confirmations are complete
+</HARD-GATE>
+
+## Scope
+
+**Use this skill when**:
+- 用户要求基于 PRD 产出架构设计文档
+- 需要从 PRD 和 research 中提取架构约束、候选方案、关键决策
+- 需要进行业务域划分、模块设计或微服务聚合设计
+
+**Do NOT use this skill for**:
+- 详细 API 设计
+- 数据库表结构设计
+- 详细部署运维方案
+- 跳过确认、直接生成完整架构文档
+
+如果用户请求的是上面这些更细的设计内容，应先完成架构设计，再交给后续 skill 处理。
+
+## Why This Must Be Interactive
+
+架构设计是决策密集型工作，不是信息搬运。
+
+```
+架构设计错误的代价 >> 多花几分钟确认的成本
+```
+
+PRD 提供的是业务目标，不会自动给出正确的服务边界、模块职责、技术选型和异常路径。即使需求看起来明确，也必须通过分块确认来暴露假设和权衡。
+
+## Checklist
+
+You MUST create a task for each item and complete them in order:
+
+1. **Enter Plan mode** - architecture work must be planned, not streamed out in one pass
+2. **Read source context** - read `docs/01-prd/PRD.md` and `docs/01-prd/research.md`
+3. **Expand referenced material** - scan both files for image references and markdown/doc references, then read them
+4. **Summarize architecture inputs** - list the referenced files/images and explain how each influences the design
+5. **Identify business domains** - propose 2-3 partitioning options, explain trade-offs, confirm with user
+6. **Design service/module boundaries** - propose aggregation options, compare coarse vs fine granularity, confirm with user
+7. **Narrow technical choices** - extract candidate stacks from research, compare 2-3 options, confirm with user
+8. **Design core flows** - capture main business flows and exception paths, confirm with user
+9. **Write architecture document** - exit Plan mode and write `docs/02-architecture/architecture-design.md`
+10. **Handle updates explicitly** - if the file already exists, update incrementally with versioning and change markers
+
+## Process Flow
+
+```dot
+digraph architecture_design {
+    "Enter Plan mode" [shape=box];
+    "Read PRD + research" [shape=box];
+    "Read referenced docs/images" [shape=box];
+    "Summarize architecture inputs" [shape=box];
+    "Business domain options" [shape=box];
+    "User confirms domain direction?" [shape=diamond];
+    "Service/module boundary options" [shape=box];
+    "User confirms boundary direction?" [shape=diamond];
+    "Tech stack options" [shape=box];
+    "User confirms stack direction?" [shape=diamond];
+    "Core flow + exceptions" [shape=box];
+    "User confirms flows?" [shape=diamond];
+    "Exit Plan mode" [shape=box];
+    "Write architecture document" [shape=box];
+
+    "Enter Plan mode" -> "Read PRD + research";
+    "Read PRD + research" -> "Read referenced docs/images";
+    "Read referenced docs/images" -> "Summarize architecture inputs";
+    "Summarize architecture inputs" -> "Business domain options";
+    "Business domain options" -> "User confirms domain direction?";
+    "User confirms domain direction?" -> "Business domain options" [label="revise"];
+    "User confirms domain direction?" -> "Service/module boundary options" [label="confirmed"];
+    "Service/module boundary options" -> "User confirms boundary direction?";
+    "User confirms boundary direction?" -> "Service/module boundary options" [label="revise"];
+    "User confirms boundary direction?" -> "Tech stack options" [label="confirmed"];
+    "Tech stack options" -> "User confirms stack direction?";
+    "User confirms stack direction?" -> "Tech stack options" [label="revise"];
+    "User confirms stack direction?" -> "Core flow + exceptions" [label="confirmed"];
+    "Core flow + exceptions" -> "User confirms flows?";
+    "User confirms flows?" -> "Core flow + exceptions" [label="revise"];
+    "User confirms flows?" -> "Exit Plan mode" [label="confirmed"];
+    "Exit Plan mode" -> "Write architecture document";
+}
+```
+
+## The Process
+
+### 1. Enter Plan Mode First
+
+必须先进入 Plan 模式，再开始任何架构推演或问题确认。
+
+Do not:
+- 直接输出完整架构文档
+- 在普通对话流里一次问完所有问题
+- 在尚未确认关键决策前落盘
+
+### 2. Read the Full Input Surface
+
+必须读取：
+- `docs/01-prd/PRD.md`
+- `docs/01-prd/research.md`
+- 两个文件中引用的图片
+- 两个文件中引用的 markdown 或其他文档
+
+读取后要显式输出：
+- 引用文档清单
+- 图片清单
+- 每个引用项为什么影响架构判断
+
+不要把图片或引用文档当成“可选补充材料”。如果被引用，它们就是输入的一部分。
+
+### 3. Confirm Decisions in Stages
+
+像 brainstorming 一样分阶段推进，不要把所有决策揉成一轮问答。
+
+每个阶段都要：
+- 先给出你基于当前材料的判断
+- 提供 2-3 个可选方向
+- 解释 trade-off
+- 给出推荐方案与原因
+- 使用 AskUserQuestion 确认后再进入下一阶段
+
+优先确认以下四类关键决策。
+
+### 4. Business Domains
+
+识别系统的业务域，并提供 2-3 种划分方式，例如：
+- 更贴近业务能力的划分
+- 更贴近团队协作边界的划分
+- 更贴近未来演进的划分
+
+必须说明：
+- 每种方案的职责边界
+- 哪些领域适合拆开，哪些应该保持一起
+- 哪些划分会导致高耦合或高协调成本
+
+如果 PRD 范围明显过大，先帮助用户拆成多个子项目或阶段，再继续当前 skill 的架构设计。
+
+### 5. Service or Module Boundaries
+
+在确认业务域后，再讨论微服务或模块边界。
+
+必须提供对比：
+- 聚合式方案：一个服务承载多个强相关业务域
+- 细粒度方案：每个域独立服务或模块
+- 折中方案：核心域独立，支撑域聚合
+
+至少从这些维度分析：
+- 性能与调用链复杂度
+- 数据一致性与事务边界
+- 团队协作成本
+- 发布复杂度
+- 演进弹性
+
+推荐默认方向时，避免“为了看起来高级而过度拆分”。
+
+### 6. Technology Choices
+
+从 `research.md` 提取候选技术，不要凭空发散。
+
+必须：
+- 给出 2-3 个现实可行的选项
+- 说明适用场景
+- 说明团队能力前提和迁移成本
+- 如果 research 已经明显收敛，也要解释为什么收敛
+
+技术栈讨论聚焦架构层面，例如：
+- 后端服务技术路线
+- 通信方式
+- 网关/鉴权框架
+- 异步处理或事件机制
+
+不要下沉到详细 API 或表结构。
+
+### 7. Core Flows and Failure Paths
+
+识别最关键的业务流程，并输出 Mermaid 图。
+
+必须覆盖：
+- 主成功路径
+- 关键异常路径
+- 跨服务或跨模块的交互点
+- 需要幂等、补偿、重试或降级的地方
+
+如果存在多个核心流程，优先覆盖对架构影响最大的那几个，而不是试图穷举全部流程。
+
+### 8. Write the Document Only After Confirmation
+
+完成所有关键决策确认后：
+1. 调用 ExitPlanMode
+2. 生成 `docs/02-architecture/architecture-design.md`
+3. 明确告知用户已完成写入
+
+## Document Requirements
+
+### YAML Frontmatter
+
+```yaml
+---
+version: 1.0.0
+status: draft
+modules:
+  - module-name
+change_log:
+  - version: 1.0.0
+    date: YYYY-MM-DD
+    changes: 初始版本
+---
+```
+
+### Required Structure
+
+文档至少应包含：
+- 背景与目标
+- 架构约束与输入依据
+- 业务域划分
+- 后端微服务划分或模块划分
+- 核心技术选型与理由
+- 核心业务流程与 Mermaid 图
+- 异常处理与关键风险
+- 工作项清单
+
+### Module List Format
+
+供后续 technical-design 解析的模块清单必须使用下面格式：
+
+```markdown
+## 后端微服务划分
+- user-center-service: 用户中心服务，聚合用户域、权限域、组织域
+- order-service: 订单服务，聚合订单域、支付域
+
+## 工作项清单（按业务域）
+- user-domain: 用户域，负责用户注册、登录
+- permission-domain: 权限域，负责角色、权限管理
+```
+
+格式要求：`name: 描述`
+
+## Incremental Update Rules
+
+如果 `docs/02-architecture/architecture-design.md` 已存在，不要整篇重写。
+
+必须：
+1. 读取旧版本
+2. 对比 PRD 与 research 的变化
+3. 只更新受影响章节
+4. 添加更新标记：`<!-- UPDATED: 2026-03-13 -->`
+5. 如果是破坏性调整，添加：`<!-- BREAKING: 说明 -->`
+6. 递增版本号并更新 `change_log`
+
+## Red Flags
+
+出现以下任一情况，立即停止并回到正确流程：
+- 没有进入 Plan 模式
+- 没有读取引用图片或引用文档
+- 没有输出输入材料清单及其作用
+- 没有按阶段确认，而是一次性生成完整方案
+- 没有提供 2-3 个可比较的选项
+- 没有使用 AskUserQuestion
+- 因为用户说“赶时间”就跳过确认
+
+这些都不是捷径，而是架构失误的前兆。
+
+## Guiding Principles
+
+- **先理解输入，再给方案**：架构设计要以 PRD、research、引用材料为边界
+- **一次只推进一个决策块**：减少误解，方便修正
+- **始终给出备选方案**：不要把单一路径伪装成客观答案
+- **推荐要有理由**：结论必须连回约束、风险和团队现实
+- **优先清晰边界**：职责、依赖、交互都要可解释
+- **避免过度设计**：不要为了“架构感”引入不必要的拆分和复杂度
