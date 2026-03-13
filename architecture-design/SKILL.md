@@ -6,7 +6,7 @@ context: fork
 agent: Plan
 ---
 
-# Architecture Design
+# Architecture Design / 架构设计
 
 将 PRD 转化为架构设计文档，但不能把这件事当成一次性文档生成任务。先分析上下文，再分块确认关键架构决策，最后再落文档。
 
@@ -20,7 +20,7 @@ You MUST:
 4. write the document only after the staged confirmations are complete
 </HARD-GATE>
 
-## Scope
+## Scope / 使用范围
 
 **Use this skill when**:
 - 用户要求基于 PRD 产出架构设计文档
@@ -35,7 +35,7 @@ You MUST:
 
 如果用户请求的是上面这些更细的设计内容，应先完成架构设计，再交给后续 skill 处理。
 
-## Architecture Boundary
+## Architecture Boundary / 架构边界
 
 这个 skill 的目标是定义系统边界，不是提前写技术设计。
 
@@ -60,7 +60,7 @@ You MUST:
 
 更推荐的文档骨架见 [references/architecture-template.md](references/architecture-template.md)，禁止下沉的内容清单见 [references/out-of-scope.md](references/out-of-scope.md)。
 
-## Why This Must Be Interactive
+## Why This Must Be Interactive / 为什么必须交互式推进
 
 架构设计是决策密集型工作，不是信息搬运。
 
@@ -70,7 +70,7 @@ You MUST:
 
 PRD 提供的是业务目标，不会自动给出正确的服务边界、模块职责、技术选型和异常路径。即使需求看起来明确，也必须通过分块确认来暴露假设和权衡。
 
-## Checklist
+## Checklist / 执行清单
 
 You MUST create a task for each item and complete them in order:
 
@@ -85,30 +85,30 @@ You MUST create a task for each item and complete them in order:
 9. **Write architecture document** - exit Plan mode and write `docs/02-architecture/architecture-design.md`
 10. **Handle updates explicitly** - if the file already exists, update incrementally with versioning and change markers
 
-## Process Flow
+## Process Flow / 处理流程
 
 ```mermaid
 flowchart TD
-    A[Enter Plan mode] --> B[Read PRD + research]
-    B --> C[Read referenced docs/images]
-    C --> D[Summarize architecture inputs]
-    D --> E[Business domain options]
-    E --> F{User confirms domain direction?}
-    F -- revise --> E
-    F -- confirmed --> G[Service/module boundary options]
-    G --> H{User confirms boundary direction?}
-    H -- revise --> G
-    H -- confirmed --> I[Tech stack options]
-    I --> J{User confirms stack direction?}
-    J -- revise --> I
-    J -- confirmed --> K[Core flow + exceptions]
-    K --> L{User confirms flows?}
-    L -- revise --> K
-    L -- confirmed --> M[Exit Plan mode]
-    M --> N[Write architecture document]
+    A[Enter Plan mode<br/>进入 Plan 模式] --> B[Read PRD + research<br/>读取 PRD 与 research]
+    B --> C[Read referenced docs/images<br/>读取引用文档与图片]
+    C --> D[Summarize architecture inputs<br/>总结架构输入]
+    D --> E[Business domain options<br/>业务域划分方案]
+    E --> F{User confirms domain direction?<br/>用户确认业务域方向?}
+    F -- revise / 需调整 --> E
+    F -- confirmed / 已确认 --> G[Service/module boundary options<br/>服务/模块边界方案]
+    G --> H{User confirms boundary direction?<br/>用户确认边界方向?}
+    H -- revise / 需调整 --> G
+    H -- confirmed / 已确认 --> I[Tech stack options<br/>技术栈方案]
+    I --> J{User confirms stack direction?<br/>用户确认技术方向?}
+    J -- revise / 需调整 --> I
+    J -- confirmed / 已确认 --> K[Core flow + exceptions<br/>核心流程与异常路径]
+    K --> L{User confirms flows?<br/>用户确认流程?}
+    L -- revise / 需调整 --> K
+    L -- confirmed / 已确认 --> M[Exit Plan mode<br/>退出 Plan 模式]
+    M --> N[Write architecture document<br/>写入架构文档]
 ```
 
-## The Process
+## The Process / 详细流程
 
 ### 1. Enter Plan Mode First
 
@@ -136,7 +136,7 @@ Do not:
 
 ### 3. Confirm Decisions in Stages
 
-像 brainstorming 一样分阶段推进，不要把所有决策揉成一轮问答。
+像 `brainstorming` 一样分阶段推进，不要把所有决策揉成一轮问答。
 
 每个阶段都要：
 - 先给出你基于当前材料的判断
@@ -218,7 +218,7 @@ Do not:
 
 写作时优先参考 [references/architecture-template.md](references/architecture-template.md) 的推荐骨架，但不要机械套模板。章节可以合并、重排或省略，只要仍然保持架构层边界清晰。
 
-## Document Requirements
+## Document Requirements / 文档要求
 
 ### YAML Frontmatter
 
@@ -235,7 +235,7 @@ change_log:
 ---
 ```
 
-### Required Structure
+### Required Structure / 必备结构
 
 文档至少应包含：
 - 背景与目标
@@ -254,7 +254,7 @@ change_log:
 
 不要写成技术设计文档。更具体的排除项见 [references/out-of-scope.md](references/out-of-scope.md)。
 
-### Recommended Writing Shape
+### Recommended Writing Shape / 推荐写法
 
 为保证通用性，不使用硬编码模板，而使用“推荐骨架 + 可省略条件”的方式。
 

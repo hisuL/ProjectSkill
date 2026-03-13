@@ -6,7 +6,7 @@ context: fork
 agent: Plan
 ---
 
-# Technical Design
+# Technical Design / 技术设计
 
 将 PRD 和架构设计转化为可供编码 Agent 使用的技术设计文档，但不能把这件事当成一次性文档生成任务。要先读取完整上下文，再像 `brainstorming` 那样分阶段确认关键设计块，最后再落文档。
 
@@ -21,7 +21,7 @@ You MUST:
 5. write the document only after staged confirmations are complete
 </HARD-GATE>
 
-## Scope
+## Scope / 使用范围
 
 **Use this skill when**:
 - 用户要求基于 PRD 和架构设计产出技术设计文档
@@ -35,7 +35,7 @@ You MUST:
 
 如果架构设计还不存在，或模块边界仍然模糊，应先完成 `architecture-design`。如果技术设计已经确认且用户下一步要拆实现任务，应交给 `writing-plans`。
 
-## Why This Must Be Interactive
+## Why This Must Be Interactive / 为什么必须交互式推进
 
 技术设计不是“把架构文档翻译成 markdown”。
 
@@ -45,7 +45,7 @@ You MUST:
 
 即使 PRD 和架构文档很完整，也不会自动给出正确的接口粒度、字段模型、事件边界、异常处理和前端状态流。像 `brainstorming` 一样分阶段确认，可以尽早暴露假设并收敛方案。
 
-## Checklist
+## Checklist / 执行清单
 
 You MUST create a task for each item and complete them in order:
 
@@ -60,34 +60,34 @@ You MUST create a task for each item and complete them in order:
 9. **Write technical design docs** - exit Plan mode and write files under `docs/03-technical-design/{module}/{role}/`
 10. **Handle updates explicitly** - if files already exist, update incrementally with versioning and change markers
 
-## Process Flow
+## Process Flow / 处理流程
 
 ```mermaid
 flowchart TD
-    A[Enter Plan mode] --> B[Read PRD + architecture]
-    B --> C[Read referenced docs/images]
-    C --> D[Summarize design inputs]
-    D --> E[Resolve module + role]
-    E --> F[API options]
-    F --> G{User confirms API?}
-    G -- revise --> F
-    G -- confirmed --> H[DB options]
-    H --> I{User confirms DB?}
-    I -- revise --> H
-    I -- confirmed --> J[Middleware options]
-    J --> K{User confirms middleware?}
-    K -- revise --> J
-    K -- confirmed or skipped --> L[Frontend options]
-    L --> M{User confirms frontend?}
-    M -- revise --> L
-    M -- confirmed or skipped --> N[Dependency contracts]
-    N --> O{User confirms dependencies?}
-    O -- revise --> N
-    O -- confirmed --> P[Exit Plan mode]
-    P --> Q[Write technical design docs]
+    A[Enter Plan mode<br/>进入 Plan 模式] --> B[Read PRD + architecture<br/>读取 PRD 与架构设计]
+    B --> C[Read referenced docs/images<br/>读取引用文档与图片]
+    C --> D[Summarize design inputs<br/>总结设计输入]
+    D --> E[Resolve module + role<br/>确定模块与角色]
+    E --> F[API options<br/>API 设计方案]
+    F --> G{User confirms API?<br/>用户确认 API 方案?}
+    G -- revise / 需调整 --> F
+    G -- confirmed / 已确认 --> H[DB options<br/>数据库设计方案]
+    H --> I{User confirms DB?<br/>用户确认数据库方案?}
+    I -- revise / 需调整 --> H
+    I -- confirmed / 已确认 --> J[Middleware options<br/>中间件设计方案]
+    J --> K{User confirms middleware?<br/>用户确认中间件方案?}
+    K -- revise / 需调整 --> J
+    K -- confirmed or skipped / 已确认或跳过 --> L[Frontend options<br/>前端设计方案]
+    L --> M{User confirms frontend?<br/>用户确认前端方案?}
+    M -- revise / 需调整 --> L
+    M -- confirmed or skipped / 已确认或跳过 --> N[Dependency contracts<br/>依赖契约]
+    N --> O{User confirms dependencies?<br/>用户确认依赖关系?}
+    O -- revise / 需调整 --> N
+    O -- confirmed / 已确认 --> P[Exit Plan mode<br/>退出 Plan 模式]
+    P --> Q[Write technical design docs<br/>写入技术设计文档]
 ```
 
-## The Process
+## The Process / 详细流程
 
 ### 1. Enter Plan Mode First
 
@@ -232,9 +232,9 @@ Do not:
 
 模板和章节骨架见 [references/templates.md](references/templates.md)。
 
-## Document Requirements
+## Document Requirements / 文档要求
 
-### Output Paths
+### Output Paths / 输出路径
 
 必须严格使用以下结构：
 
@@ -248,7 +248,7 @@ docs/03-technical-design/{module}/frontend/component-design.md
 
 如果某个角色或章节不适用，可以跳过该文件，但必须说明为什么跳过。
 
-### YAML Frontmatter
+### YAML Frontmatter / YAML 头信息
 
 每个文档都必须包含 frontmatter：
 
@@ -267,7 +267,7 @@ change_log:
 ---
 ```
 
-### Required Quality Bar
+### Required Quality Bar / 质量要求
 
 文档必须足够支持编码，不要只停留在“列标题”层面。至少要包含：
 - 设计目标与范围
@@ -279,7 +279,7 @@ change_log:
 
 对 backend 而言，业务逻辑要具体到编码可执行的粒度。对 frontend 而言，状态变化和交互反馈要具体到实现可拆分的粒度。
 
-## Incremental Update Rules
+## Incremental Update Rules / 增量更新规则
 
 如果目标文件已存在，不要整篇重写。
 
@@ -291,7 +291,7 @@ change_log:
 5. 如果是破坏性调整，添加：`<!-- BREAKING: 说明 -->`
 6. 递增版本号并更新 `change_log`
 
-## Parallel Use
+## Parallel Use / 并行使用规则
 
 这个 skill 支持并行，但并行单位应该是模块，不应该是同一模块内的同一角色。
 
@@ -304,7 +304,7 @@ change_log:
 - 两个 Agent 同时写同一个 `api-design.md`
 - 在模块边界未确认前并行展开多个高耦合模块
 
-## Red Flags
+## Red Flags / 风险信号
 
 出现以下任一情况，立即停止并回到正确流程：
 - 没有进入 Plan 模式
