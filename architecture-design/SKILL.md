@@ -35,6 +35,31 @@ You MUST:
 
 如果用户请求的是上面这些更细的设计内容，应先完成架构设计，再交给后续 skill 处理。
 
+## Architecture Boundary
+
+这个 skill 的目标是定义系统边界，不是提前写技术设计。
+
+架构设计负责回答的问题：
+- 系统有哪些业务域、模块或服务
+- 每个边界分别拥有什么职责、数据和依赖
+- 模块之间如何协作
+- 哪些技术路线适合当前约束
+- 哪些核心流程、异常路径和非功能约束会影响整体设计
+
+架构设计不负责回答的问题：
+- 某个接口的详细 path、request、response
+- 某张表的字段、类型、索引
+- 某个前端页面的组件拆分和状态设计
+- 某段业务逻辑的实现级伪代码
+
+如果必须提到 API 或数据设计，只能停留在原则级，例如：
+- 可以写：`订单服务通过同步接口供支付服务发起扣款`
+- 可以写：`用户域拥有用户主数据，权限域只缓存授权投影`
+- 不要写：`POST /api/v1/orders/create`
+- 不要写：`orders(id bigint, status varchar(32), ...)`
+
+更推荐的文档骨架见 [references/architecture-template.md](references/architecture-template.md)，禁止下沉的内容清单见 [references/out-of-scope.md](references/out-of-scope.md)。
+
 ## Why This Must Be Interactive
 
 架构设计是决策密集型工作，不是信息搬运。
@@ -207,6 +232,8 @@ Do not:
 2. 生成 `docs/02-architecture/architecture-design.md`
 3. 明确告知用户已完成写入
 
+写作时优先参考 [references/architecture-template.md](references/architecture-template.md) 的推荐骨架，但不要机械套模板。章节可以合并、重排或省略，只要仍然保持架构层边界清晰。
+
 ## Document Requirements
 
 ### YAML Frontmatter
@@ -235,6 +262,31 @@ change_log:
 - 核心业务流程与 Mermaid 图
 - 异常处理与关键风险
 - 工作项清单
+
+如果需要提到数据或接口，只允许停留在以下粒度：
+- 数据归属与一致性策略
+- 接口或事件的交互方向与职责
+- 模块之间的契约边界
+
+不要写成技术设计文档。更具体的排除项见 [references/out-of-scope.md](references/out-of-scope.md)。
+
+### Recommended Writing Shape
+
+为保证通用性，不使用硬编码模板，而使用“推荐骨架 + 可省略条件”的方式。
+
+默认建议包含这些章节：
+- 背景与目标
+- 输入依据与约束
+- 业务域划分
+- 服务 / 模块边界
+- 核心流程与异常流程
+- 技术选型与理由
+- 数据归属与存储策略
+- 集成关系与外部依赖
+- 风险、取舍与开放问题
+- 工作项清单
+
+如果某类内容对当前项目不重要，可以简写或省略，但不要用 API 设计或数据库表结构去填充文档长度。
 
 ### Module List Format
 
@@ -273,6 +325,9 @@ change_log:
 - 没有按阶段确认，而是一次性生成完整方案
 - 没有提供 2-3 个可比较的选项
 - 没有使用 AskUserQuestion
+- 生成结果里出现详细 endpoint 清单、request/response 参数表
+- 生成结果里出现表结构、字段类型、索引设计
+- 用技术设计细节代替架构层边界说明
 - 因为用户说“赶时间”就跳过确认
 
 这些都不是捷径，而是架构失误的前兆。
