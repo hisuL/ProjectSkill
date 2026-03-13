@@ -62,48 +62,29 @@ You MUST create a task for each item and complete them in order:
 
 ## Process Flow
 
-```dot
-digraph technical_design {
-    "Enter Plan mode" [shape=box];
-    "Read PRD + architecture" [shape=box];
-    "Read referenced docs/images" [shape=box];
-    "Summarize design inputs" [shape=box];
-    "Resolve module + role" [shape=box];
-    "API options" [shape=box];
-    "User confirms API?" [shape=diamond];
-    "DB options" [shape=box];
-    "User confirms DB?" [shape=diamond];
-    "Middleware options" [shape=box];
-    "User confirms middleware?" [shape=diamond];
-    "Frontend options" [shape=box];
-    "User confirms frontend?" [shape=diamond];
-    "Dependency contracts" [shape=box];
-    "User confirms dependencies?" [shape=diamond];
-    "Exit Plan mode" [shape=box];
-    "Write technical design docs" [shape=box];
-
-    "Enter Plan mode" -> "Read PRD + architecture";
-    "Read PRD + architecture" -> "Read referenced docs/images";
-    "Read referenced docs/images" -> "Summarize design inputs";
-    "Summarize design inputs" -> "Resolve module + role";
-    "Resolve module + role" -> "API options";
-    "API options" -> "User confirms API?";
-    "User confirms API?" -> "API options" [label="revise"];
-    "User confirms API?" -> "DB options" [label="confirmed"];
-    "DB options" -> "User confirms DB?";
-    "User confirms DB?" -> "DB options" [label="revise"];
-    "User confirms DB?" -> "Middleware options" [label="confirmed"];
-    "Middleware options" -> "User confirms middleware?";
-    "User confirms middleware?" -> "Middleware options" [label="revise"];
-    "User confirms middleware?" -> "Frontend options" [label="confirmed or skipped"];
-    "Frontend options" -> "User confirms frontend?";
-    "User confirms frontend?" -> "Frontend options" [label="revise"];
-    "User confirms frontend?" -> "Dependency contracts" [label="confirmed or skipped"];
-    "Dependency contracts" -> "User confirms dependencies?";
-    "User confirms dependencies?" -> "Dependency contracts" [label="revise"];
-    "User confirms dependencies?" -> "Exit Plan mode" [label="confirmed"];
-    "Exit Plan mode" -> "Write technical design docs";
-}
+```mermaid
+flowchart TD
+    A[Enter Plan mode] --> B[Read PRD + architecture]
+    B --> C[Read referenced docs/images]
+    C --> D[Summarize design inputs]
+    D --> E[Resolve module + role]
+    E --> F[API options]
+    F --> G{User confirms API?}
+    G -- revise --> F
+    G -- confirmed --> H[DB options]
+    H --> I{User confirms DB?}
+    I -- revise --> H
+    I -- confirmed --> J[Middleware options]
+    J --> K{User confirms middleware?}
+    K -- revise --> J
+    K -- confirmed or skipped --> L[Frontend options]
+    L --> M{User confirms frontend?}
+    M -- revise --> L
+    M -- confirmed or skipped --> N[Dependency contracts]
+    N --> O{User confirms dependencies?}
+    O -- revise --> N
+    O -- confirmed --> P[Exit Plan mode]
+    P --> Q[Write technical design docs]
 ```
 
 ## The Process

@@ -87,41 +87,25 @@ You MUST create a task for each item and complete them in order:
 
 ## Process Flow
 
-```dot
-digraph architecture_design {
-    "Enter Plan mode" [shape=box];
-    "Read PRD + research" [shape=box];
-    "Read referenced docs/images" [shape=box];
-    "Summarize architecture inputs" [shape=box];
-    "Business domain options" [shape=box];
-    "User confirms domain direction?" [shape=diamond];
-    "Service/module boundary options" [shape=box];
-    "User confirms boundary direction?" [shape=diamond];
-    "Tech stack options" [shape=box];
-    "User confirms stack direction?" [shape=diamond];
-    "Core flow + exceptions" [shape=box];
-    "User confirms flows?" [shape=diamond];
-    "Exit Plan mode" [shape=box];
-    "Write architecture document" [shape=box];
-
-    "Enter Plan mode" -> "Read PRD + research";
-    "Read PRD + research" -> "Read referenced docs/images";
-    "Read referenced docs/images" -> "Summarize architecture inputs";
-    "Summarize architecture inputs" -> "Business domain options";
-    "Business domain options" -> "User confirms domain direction?";
-    "User confirms domain direction?" -> "Business domain options" [label="revise"];
-    "User confirms domain direction?" -> "Service/module boundary options" [label="confirmed"];
-    "Service/module boundary options" -> "User confirms boundary direction?";
-    "User confirms boundary direction?" -> "Service/module boundary options" [label="revise"];
-    "User confirms boundary direction?" -> "Tech stack options" [label="confirmed"];
-    "Tech stack options" -> "User confirms stack direction?";
-    "User confirms stack direction?" -> "Tech stack options" [label="revise"];
-    "User confirms stack direction?" -> "Core flow + exceptions" [label="confirmed"];
-    "Core flow + exceptions" -> "User confirms flows?";
-    "User confirms flows?" -> "Core flow + exceptions" [label="revise"];
-    "User confirms flows?" -> "Exit Plan mode" [label="confirmed"];
-    "Exit Plan mode" -> "Write architecture document";
-}
+```mermaid
+flowchart TD
+    A[Enter Plan mode] --> B[Read PRD + research]
+    B --> C[Read referenced docs/images]
+    C --> D[Summarize architecture inputs]
+    D --> E[Business domain options]
+    E --> F{User confirms domain direction?}
+    F -- revise --> E
+    F -- confirmed --> G[Service/module boundary options]
+    G --> H{User confirms boundary direction?}
+    H -- revise --> G
+    H -- confirmed --> I[Tech stack options]
+    I --> J{User confirms stack direction?}
+    J -- revise --> I
+    J -- confirmed --> K[Core flow + exceptions]
+    K --> L{User confirms flows?}
+    L -- revise --> K
+    L -- confirmed --> M[Exit Plan mode]
+    M --> N[Write architecture document]
 ```
 
 ## The Process
