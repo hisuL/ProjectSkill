@@ -1,0 +1,7 @@
+interface:
+  display_name: "Technical Design Planner"
+  short_description: "Extract a design writing plan and decision log before drafting technical docs"
+  default_prompt: "Use $technical-design-planner to read the PRD, architecture doc, and references, then produce a structured technical design plan with explicit frontend interaction requirements and writer handoff notes."
+
+policy:
+  allow_implicit_invocation: true

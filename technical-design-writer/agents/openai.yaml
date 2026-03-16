@@ -1,0 +1,7 @@
+interface:
+  display_name: "Technical Design Writer"
+  short_description: "Write technical design docs from a completed design plan"
+  default_prompt: "Use $technical-design-writer to read an existing technical design plan and convert it into module-level technical design documents with explicit coverage of frontend interaction requirements."
+
+policy:
+  allow_implicit_invocation: true

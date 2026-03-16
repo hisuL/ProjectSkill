@@ -10,6 +10,8 @@ agent: Plan
 
 将 PRD 转化为架构设计文档，但不能把这件事当成一次性文档生成任务。先分析上下文，再分块确认关键架构决策，最后再落文档。
 
+这个 skill 还是后续 `technical-design` 的上游输入定义者。除了完成架构判断，还必须产出稳定、可消费的模块交接信息，避免技术设计阶段重新猜测模块边界。
+
 <HARD-GATE>
 Do NOT write the full architecture document immediately after reading the PRD.
 
@@ -38,6 +40,19 @@ You MUST:
 ## Architecture Boundary / 架构边界
 
 这个 skill 的目标是定义系统边界，不是提前写技术设计。
+
+术语统一如下：
+- `domain`：业务能力边界，用于表达业务职责怎么分
+- `service`：实现载体，用于表达系统怎么部署或聚合运行
+- `module`：技术设计消费边界，也是后续 `docs/03-technical-design/{module_id}/...` 的最小单元
+- `work item`：交付拆分单元，用于表达后续设计和实现的分批方式，不等于技术设计目录单元
+- `module_id`：技术设计消费的唯一模块标识，必须使用 kebab-case 英文 slug，并作为 `docs/03-technical-design/{module_id}/...` 的目录名
+
+交接语义必须稳定：
+- 后续 `technical-design` 的最小消费单元始终是 `module_id`
+- `work item` 只用于排期和交付分组，不用于替代 `module_id`
+- 如果一个 `work item` 覆盖多个模块，必须在架构文档里显式拆成多个 `module_id`
+- `service` 可以承载多个 `module`，但 `technical-design` 不应按 `service` 重新定义边界
 
 架构设计负责回答的问题：
 - 系统有哪些业务域、模块或服务
@@ -82,8 +97,9 @@ You MUST create a task for each item and complete them in order:
 6. **Design service/module boundaries** - propose aggregation options, compare coarse vs fine granularity, confirm with user
 7. **Narrow technical choices** - extract candidate stacks from research, compare 2-3 options, confirm with user
 8. **Design core flows** - capture main business flows and exception paths, confirm with user
-9. **Write architecture document** - exit Plan mode and write `docs/02-architecture/architecture-design.md`
-10. **Handle updates explicitly** - if the file already exists, update incrementally with versioning and change markers
+9. **Produce module handoff cards** - define the module-level handoff contract that `technical-design` will consume
+10. **Write architecture document** - leave planning mode and write `docs/02-architecture/architecture-design.md`
+11. **Handle updates explicitly** - if the file already exists, update incrementally with versioning and change markers
 
 ## Process Flow / 处理流程
 
@@ -104,8 +120,9 @@ flowchart TD
     J -- confirmed / 已确认 --> K[Core flow + exceptions<br/>核心流程与异常路径]
     K --> L{User confirms flows?<br/>用户确认流程?}
     L -- revise / 需调整 --> K
-    L -- confirmed / 已确认 --> M[Exit Plan mode<br/>退出 Plan 模式]
-    M --> N[Write architecture document<br/>写入架构文档]
+    L -- confirmed / 已确认 --> M[Module handoff cards<br/>模块交接卡]
+    M --> N[Leave planning mode<br/>结束计划阶段]
+    N --> O[Write architecture document<br/>写入架构文档]
 ```
 
 ## The Process / 详细流程
@@ -143,7 +160,7 @@ Do not:
 - 提供 2-3 个可选方向
 - 解释 trade-off
 - 给出推荐方案与原因
-- 使用 AskUserQuestion 确认后再进入下一阶段
+- 用自然协作语言向用户确认后再进入下一阶段，不要依赖特定平台动作名
 
 优先确认以下四类关键决策。
 
@@ -209,10 +226,48 @@ Do not:
 
 如果存在多个核心流程，优先覆盖对架构影响最大的那几个，而不是试图穷举全部流程。
 
-### 8. Write the Document Only After Confirmation
+### 8. Module Handoff Cards
+
+在写架构文档前，必须先为每个后续技术设计单元产出模块交接卡。
+
+每张交接卡至少包含：
+- `module_id`
+- `module_name`
+- `goal`
+- `owner_domain`
+- `delivery_scope`: `backend` / `frontend` / `both`
+- `frontend_surfaces`
+- `ui_ownership_notes`
+- `upstream_dependencies`
+- `downstream_dependencies`
+- `input_contracts`
+- `output_contracts`
+- `data_owner`
+- `delivery_priority`
+- `open_questions`
+
+要求：
+- `module_id` 必须唯一，使用 kebab-case 英文 slug
+- `module_id`、依赖列表、交付范围必须可直接被 `technical-design` 消费
+- `input_contracts` / `output_contracts` 只写边界与职责，不下沉到字段级 schema
+
+依赖契约的最低粒度必须足够支撑后续技术设计，至少说明：
+- 调用或事件方向
+- 同步 / 异步
+- 发起方与拥有方
+- 契约目的和边界职责
+- 交付前置关系
+- 失败处理责任归属
+
+前端相关模块还必须说明：
+- 哪些页面、用户旅程或交互面属于该 `module_id`
+- 哪些跨模块协作会直接影响前端交互设计
+- 如果前端归属不明确，要在交接卡中显式标注 open question，而不是留给 `technical-design` 猜测
+
+### 9. Write the Document Only After Confirmation
 
 完成所有关键决策确认后：
-1. 调用 ExitPlanMode
+1. 结束计划阶段，进入写作阶段
 2. 生成 `docs/02-architecture/architecture-design.md`
 3. 明确告知用户已完成写入
 
@@ -244,6 +299,8 @@ change_log:
 - 后端微服务划分或模块划分
 - 核心技术选型与理由
 - 核心业务流程与 Mermaid 图
+- 依赖契约摘要
+- 模块交接卡
 - 异常处理与关键风险
 - 工作项清单
 
@@ -257,6 +314,33 @@ change_log:
 ### Recommended Writing Shape / 推荐写法
 
 为保证通用性，不使用硬编码模板，而使用“推荐骨架 + 可省略条件”的方式。
+
+## Incremental Update Rules / 增量更新规则
+
+如果目标文件已存在，不要整篇重写。
+
+必须：
+1. 读取旧版本
+2. 对比 PRD、research、引用材料和当前文档的差异
+3. 只更新受影响章节
+4. 添加更新标记：`<!-- UPDATED: 2026-03-13 -->`
+5. 如果是破坏性调整，添加：`<!-- BREAKING: 说明 -->`
+6. 递增版本号并更新 `change_log`
+
+## Collaboration Contract / 协作契约
+
+`technical-design` 会默认消费本 skill 的以下产物：
+- `modules` frontmatter
+- 工作项清单
+- 模块交接卡
+- 依赖契约摘要
+
+消费优先级必须明确：
+- 模块交接卡和依赖契约摘要是 `technical-design` 的主输入
+- PRD 和 research 在技术设计阶段主要用于校验和补充，不用于重新定义模块边界
+- 如果架构文档里的 `module_id`、依赖关系或前端归属不清晰，应先回补架构文档，而不是在技术设计阶段自行重构边界
+
+如果这些内容缺失，后续技术设计就会退化为重新做一轮边界澄清。因此这里不是“推荐填写”，而是必须稳定产出。
 
 默认建议包含这些章节：
 - 背景与目标
@@ -274,31 +358,22 @@ change_log:
 
 ### Module List Format
 
-供后续 technical-design 解析的模块清单必须使用下面格式：
+供后续 `technical-design` 解析的模块清单必须和模块交接卡保持一致，建议使用下面格式：
 
 ```markdown
 ## 后端微服务划分
 - user-center-service: 用户中心服务，聚合用户域、权限域、组织域
 - order-service: 订单服务，聚合订单域、支付域
 
-## 工作项清单（按业务域）
-- user-domain: 用户域，负责用户注册、登录
-- permission-domain: 权限域，负责角色、权限管理
+## 工作项清单
+- user-account: 用户账号模块，负责注册、登录、资料维护
+- permission-center: 权限中心模块，负责角色、权限与授权查询
 ```
 
-格式要求：`name: 描述`
-
-## Incremental Update Rules
-
-如果 `docs/02-architecture/architecture-design.md` 已存在，不要整篇重写。
-
-必须：
-1. 读取旧版本
-2. 对比 PRD 与 research 的变化
-3. 只更新受影响章节
-4. 添加更新标记：`<!-- UPDATED: 2026-03-13 -->`
-5. 如果是破坏性调整，添加：`<!-- BREAKING: 说明 -->`
-6. 递增版本号并更新 `change_log`
+格式要求：
+- 使用 `module_id: 描述`
+- `module_id` 必须与模块交接卡中的 `module_id` 完全一致
+- 工作项清单描述交付边界，模块交接卡描述消费契约
 
 ## Red Flags
 
@@ -308,7 +383,7 @@ change_log:
 - 没有输出输入材料清单及其作用
 - 没有按阶段确认，而是一次性生成完整方案
 - 没有提供 2-3 个可比较的选项
-- 没有使用 AskUserQuestion
+- 没有产出模块交接卡或依赖契约摘要
 - 生成结果里出现详细 endpoint 清单、request/response 参数表
 - 生成结果里出现表结构、字段类型、索引设计
 - 用技术设计细节代替架构层边界说明

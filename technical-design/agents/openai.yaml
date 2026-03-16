@@ -1,7 +1,7 @@
 interface:
   display_name: "Technical Design"
-  short_description: "Draft staged module-level technical design docs"
-  default_prompt: "Use $technical-design to turn the PRD and architecture doc into staged, reviewable technical design docs for a target module."
+  short_description: "Compatibility entry that plans first, then writes technical design docs"
+  default_prompt: "Use $technical-design to first create a technical design plan from the PRD and architecture docs, then write final module-level technical design documents from that plan."
 
 policy:
   allow_implicit_invocation: true

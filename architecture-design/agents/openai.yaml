@@ -1,0 +1,7 @@
+interface:
+  display_name: "Architecture Design"
+  short_description: "Draft staged architecture docs with explicit module handoff cards"
+  default_prompt: "Use $architecture-design to turn the PRD and research into a staged, reviewable architecture design with clear module handoff cards for downstream technical design."
+
+policy:
+  allow_implicit_invocation: true
