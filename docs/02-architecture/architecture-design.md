@@ -397,9 +397,9 @@ sequenceDiagram
 
 ## 工作项清单
 
-- document-ingestion: 文档处理模块，负责上传、状态管理、解析、切片、向量化与失败处理
-- conversation-orchestrator: 问答模块，负责检索、生成、会话、引用装配、摘要推荐与反馈
-- chatfile-web: 前端模块，负责上传体验、分栏界面、流式对话、PDF 预览与引用联动
+- document-ingestion: 文档处理模块，负责上传、状态管理、解析、切片、向量化与失败处理；PingCode 工作项 `CFD-60`，ID `69b7e35e8aadfd4b9f26ca29`
+- conversation-orchestrator: 问答模块，负责检索、生成、会话、引用装配、摘要推荐与反馈；PingCode 工作项 `CFD-59`，ID `69b7e35e8aadfd4b9f26ca21`
+- chatfile-web: 前端模块，负责上传体验、分栏界面、流式对话、PDF 预览与引用联动；PingCode 工作项 `CFD-61`，ID `69b7e35e8aadfd4b9f26ca31`
 
 ## 开放问题
 

@@ -114,6 +114,7 @@ You MUST create a task for each item and complete them in order:
 9. **Produce module handoff cards / 产出模块交接卡** - 定义后续 `technical-design` 要消费的模块级交接契约
 10. **Write architecture document / 写入架构文档** - 结束计划阶段，写入 `docs/02-architecture/architecture-design.md`
 11. **Handle updates explicitly / 显式处理增量更新** - 已有文档时按版本和变更标记增量更新
+12. **Sync work items to PingCode / 同步工作项到 PingCode** - 当用户已指定 PingCode 项目或明确要求同步时，使用 `pingcode-skill` 将工作项清单的新增和变更同步到 PingCode，并把工作项标识回写文档
 
 ## Process Flow / 处理流程
 
@@ -284,6 +285,10 @@ Do not:
 1. 结束计划阶段，进入写作阶段
 2. 生成 `docs/02-architecture/architecture-design.md`
 3. 明确告知用户已完成写入
+4. 如果用户提供了 PingCode 项目上下文或明确要求同步，则调用 `pingcode-skill`：
+   - 对工作项清单中没有 PingCode 标识的项执行创建
+   - 对已有 PingCode 工作项 ID/标识且标题、描述发生变化的项执行更新
+   - 将新增或确认后的 PingCode 工作项标识回写到架构文档
 
 写作时优先参考 [references/architecture-template.md](references/architecture-template.md) 的推荐骨架，但不要机械套模板。章节可以合并、重排或省略，只要仍然保持架构层边界清晰。
 
@@ -340,6 +345,10 @@ change_log:
 4. 添加更新标记：`<!-- UPDATED: 2026-03-13 -->`
 5. 如果是破坏性调整，添加：`<!-- BREAKING: 说明 -->`
 6. 递增版本号并更新 `change_log`
+7. 如果本次更新影响 `工作项清单`，且用户已要求同步 PingCode，则必须使用 `pingcode-skill` 同步新增和变更：
+   - 没有 PingCode 标识的工作项视为新增，创建到目标项目
+   - 已有 PingCode 标识的工作项，如标题或职责描述变更，则更新到对应工作项
+   - 同步后把 PingCode 工作项标识和内部 ID 回写到文档
 
 ## Collaboration Contract / 协作契约
 
@@ -353,6 +362,7 @@ change_log:
 - 模块交接卡和依赖契约摘要是 `technical-design` 的主输入
 - PRD 和 research 在技术设计阶段主要用于校验和补充，不用于重新定义模块边界
 - 如果架构文档里的 `module_id`、依赖关系或前端归属不清晰，应先回补架构文档，而不是在技术设计阶段自行重构边界
+- 如果用户在架构设计阶段指定了 PingCode 项目，则 `工作项清单` 不只是文档输出，还必须作为 `pingcode-skill` 的同步源，保证文档与 PingCode 工作项保持一致
 
 如果这些内容缺失，后续技术设计就会退化为重新做一轮边界澄清。因此这里不是“推荐填写”，而是必须稳定产出。
 
@@ -388,6 +398,7 @@ change_log:
 - 使用 `module_id: 描述`
 - `module_id` 必须与模块交接卡中的 `module_id` 完全一致
 - 工作项清单描述交付边界，模块交接卡描述消费契约
+- 如果用户要求同步到 PingCode，建议在每个工作项后追加已同步的标识信息，例如 `PingCode 工作项 CFD-60，ID 69...`，便于后续增量更新时直接定位
 
 ## Red Flags / 风险信号
 

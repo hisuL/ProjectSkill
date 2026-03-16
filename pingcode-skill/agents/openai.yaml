@@ -1,0 +1,7 @@
+interface:
+  display_name: "PingCode"
+  short_description: "Operate PingCode projects, work items, and members from Codex"
+  default_prompt: "Use $pingcode-skill to work with PingCode projects and work items: list projects, inspect tasks, create projects or work items, manage project members, or break a story into actionable subtasks."
+
+policy:
+  allow_implicit_invocation: true
