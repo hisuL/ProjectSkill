@@ -1,6 +1,6 @@
 ---
 name: technical-design
-description: Compatibility entry for producing module-level technical design docs by first creating a technical design plan, then writing final docs from that plan
+description: Compatibility entry for producing module-level technical design docs by first creating a technical design plan, then writing final docs from that plan / 技术设计兼容入口，先生成写入计划，再基于计划产出模块级技术设计文档
 user-invocable: true
 context: fork
 agent: Plan
@@ -14,6 +14,15 @@ agent: Plan
 2. 再用 `technical-design-writer`
 
 这样做的目的，是把 PRD、架构设计、引用文档里的约束和前端交互要求先固化成计划文档，再基于该计划稳定生成正式技术设计，避免在长链路写作中丢上下文。
+
+## Terms / 术语说明
+
+- `compatibility entry`：兼容入口，指保留旧调用方式，但内部改成新流程
+- `planner`：技术设计计划阶段，用来沉淀约束、决策点和交互要求
+- `writer`：技术设计写作阶段，用来把 plan 转成正式文档
+- `module_id`：模块唯一标识，是技术设计最小消费单元
+- `handoff`：交接信息，指 planner 交给 writer 的结构化中间产物
+- `coverage check`：覆盖检查，确认 plan 里的要求都进入了最终文档
 
 ## When To Use / 何时使用
 
@@ -41,9 +50,9 @@ You MUST:
 
 ## Compatibility Workflow / 兼容流程
 
-把这个 skill 当作一个 orchestrator：
+把这个 skill 当作一个 `orchestrator`（流程编排入口）：
 
-### Phase 1: Planning
+### Phase 1: Planning / 第一阶段：计划沉淀
 
 调用 `technical-design-planner`，完成：
 - 读取 PRD、架构文档、引用文档和图片
@@ -51,9 +60,9 @@ You MUST:
 - 以 `module_id` 为唯一消费单元收敛模块和角色
 - 提取约束、决策点、风险、未决问题
 - 单独提取 `Frontend Interaction Requirements`
-- 生成 `design-plan.md`
+- 生成 `design-plan.md`（技术设计写入计划）
 
-### Phase 2: Writing
+### Phase 2: Writing / 第二阶段：正式写作
 
 调用 `technical-design-writer`，完成：
 - 读取 `design-plan.md`

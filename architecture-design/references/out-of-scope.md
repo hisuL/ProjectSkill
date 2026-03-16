@@ -1,8 +1,14 @@
-# Out Of Scope For Architecture Design
+# Out Of Scope For Architecture Design / 架构设计的越界内容
 
 下列内容不应在架构设计正文中展开。如果确实需要提及，只允许作为“后续技术设计关注点”简短列出，不要展开细节。
 
-## Do Not Expand These In Architecture Docs
+术语说明：
+- `out of scope`：超出当前文档职责范围的内容
+- `architecture docs`：架构设计文档
+- `rewrite heuristics`：改写提示，帮助把越界内容收回到架构层表达
+- `escape hatch`：例外兜底，只有在极少数情况下允许轻量提及
+
+## Do Not Expand These In Architecture Docs / 架构文档中不要展开这些内容
 
 - endpoint 级 API 设计
 - request / response 参数表
@@ -15,7 +21,7 @@
 - 实现级伪代码
 - 迁移脚本或部署命令
 
-## Allowed At Architecture Level
+## Allowed At Architecture Level / 架构层允许出现的内容
 
 下面这些可以写，但只能写到原则和边界层：
 
@@ -25,7 +31,7 @@
 - 某些链路需要幂等、补偿、降级、审计
 - 某个外部系统是关键依赖，需要隔离适配层
 
-## Rewrite Heuristics
+## Rewrite Heuristics / 改写提示
 
 如果你发现自己写出了下面这种内容，应该立刻改写：
 
@@ -38,7 +44,7 @@
 - `request: { userId, couponId }`
   - 改为：`下单请求需要携带用户标识和优惠上下文`
 
-## Escape Hatch
+## Escape Hatch / 例外兜底
 
 如果某项目确实需要在架构文档中略提接口或数据，只能满足以下条件：
 - 该内容只用于解释架构边界

@@ -1,6 +1,6 @@
 ---
 name: technical-design-planner
-description: Use when extracting a technical design writing plan and explicit decision log from a PRD plus architecture design before writing module-level technical design docs
+description: Use when extracting a technical design writing plan and explicit decision log from a PRD plus architecture design before writing module-level technical design docs / 用于从 PRD 和架构设计中提炼技术设计写入计划与显式决策记录，在正式写模块级技术设计之前先固化中间产物
 user-invocable: true
 context: fork
 agent: Plan
@@ -9,6 +9,17 @@ agent: Plan
 # Technical Design Planner / 技术设计写入计划
 
 把 PRD、架构设计和引用材料整理成一份可被后续技术设计写作直接消费的计划文档。这个 skill 不产出正式技术设计正文，而是沉淀写入计划、设计约束、决策点、未决问题和覆盖检查项，避免后续写作时丢上下文。
+
+为避免术语不好理解，下面几个词统一按这个意思来读：
+- `planner`：写入计划阶段，也就是“先整理清楚再开始写”
+- `writer`：正式成文阶段，也就是“把计划写成最终技术设计文档”
+- `module_id`：模块唯一标识，可以理解成“这个技术设计单元的固定名字”
+- `handoff`：交接信息，也就是“交给下一个阶段继续工作的内容”
+- `gap check`：漏项检查，也就是“反过来检查有没有漏掉”
+- `scope`：范围
+- `constraints`：约束条件
+- `decision points`：决策点
+- `referenced inputs`：引用输入材料，指最终文档开头要列出来的参考文档
 
 <HARD-GATE>
 Do NOT write the full technical design document in this skill.
@@ -19,6 +30,8 @@ You MUST:
 3. extract explicit constraints, decision points, and unresolved questions
 4. create a planning document before any technical design prose is written
 5. treat frontend interaction requirements as first-class inputs, not optional notes
+6. atomize interaction specs instead of collapsing them into broad summary bullets
+7. prepare writer-facing inputs without leaking planning artifacts into the final technical design docs
 </HARD-GATE>
 
 ## Scope / 使用范围
@@ -39,16 +52,17 @@ You MUST:
 
 You MUST create a task for each item and complete them in order:
 
-1. **Enter Plan mode**
-2. **Read source context** - read `docs/01-prd/PRD.md` and `docs/02-architecture/architecture-design.md`
-3. **Expand referenced material** - read referenced markdown/docs/images and `docs/01-prd/research.md` if it exists
-4. **Resolve scope** - identify target module(s), role (`backend` / `frontend` / `both`), and dependencies
-5. **Extract constraints** - summarize product, architecture, dependency, and delivery constraints
-6. **Extract decision points** - list decisions required before final writing
-7. **Extract frontend interaction requirements** - capture PRD and referenced-doc interaction expectations with traceability
-8. **Record unresolved questions and risks**
-9. **Write the planning doc** - save under `docs/03-technical-design-plans/{module}/`
-10. **Prepare handoff for writer** - include explicit writing order and coverage checklist
+1. **Enter Plan mode / 进入计划模式**
+2. **Read source context / 读取主输入** - read `docs/01-prd/PRD.md` and `docs/02-architecture/architecture-design.md`
+3. **Expand referenced material / 展开引用材料** - read referenced markdown/docs/images and `docs/01-prd/research.md` if it exists
+4. **Resolve scope / 收敛范围** - identify target module(s), role (`backend` / `frontend` / `both`), and dependencies
+5. **Extract constraints / 提取约束条件** - summarize product, architecture, dependency, and delivery constraints
+6. **Extract decision points / 提取决策点** - list decisions required before final writing
+7. **Extract frontend interaction requirements / 提取前端交互要求** - capture PRD and referenced-doc interaction expectations with traceability and atomic IDs
+8. **Record unresolved questions and risks / 记录未决问题与风险**
+9. **Write the planning doc / 写入计划文档** - save under `docs/03-technical-design-plans/{module}/`
+10. **Run source-to-plan gap check / 做源文档到计划文档的漏项检查** - verify no interaction spec bullets were silently merged away
+11. **Prepare handoff for writer / 给成文阶段准备交接内容** - include explicit writing order and coverage checklist
 
 ## Process Flow / 处理流程
 
@@ -79,6 +93,7 @@ flowchart TD
 - 对应的 `module_id`
 - 模块交接卡摘要
 - 输入材料清单
+- 最终文档应展示的引用材料清单
 - 约束摘要
 - 设计决策点清单
 - 待确认问题
@@ -98,10 +113,20 @@ flowchart TD
 - 状态变化
 - 用户反馈方式
 - 动效或过渡要求
+- 文案或展示细节（如果源文档明确给出）
+- 自动消失 / 收起 / 持续时间（如果源文档明确给出）
 - 异常、空态、加载态、权限态
 - 是否已在后续写作中强制覆盖
 
+这些字段是给 writer 消费的中间信息，不要求最终技术设计文档逐列暴露。最终文档只需要展示对实现有价值的结果，不要把 planner 痕迹带进去。
+
 如果 PRD 或引用文档没有明确写交互效果，也要显式写明“未发现明确交互要求”，不要默默跳过。
+
+如果存在独立交互文档，例如 `*_interactive.md`，必须遵守：
+- 不要用 `2.x`、`3.x` 这类聚合写法替代原始交互项
+- 应按原始 section、子 section 或 bullet 拆成原子 requirement
+- 每个原子 requirement 都要有稳定 ID，可被 writer 单独映射
+- 动效、toast、modal、自动淡出、推荐问题收起等行为都应单独成项，不能并入“状态切换”总括项
 
 ## Process / 处理流程
 
@@ -141,6 +166,8 @@ flowchart TD
 - 推荐依据
 - 还缺什么信息
 
+这些决策点是 planner 内部沉淀。writer 可以利用这些决策生成正文，但最终文档默认不应出现 `Decision ID`、`Plan Ref`、`Source Section` 之类过程痕迹，除非用户明确要求保留追踪信息。
+
 ### 4. Treat Frontend Interaction as a Separate Track
 
 对 frontend 或 `both` 场景，必须单独抽取：
@@ -160,6 +187,17 @@ flowchart TD
 
 如果 PRD 的用户旅程和架构交接卡中的前端归属不一致，要显式记录冲突，而不是自行选择其一。
 
+如果源材料是交互规格文档，必须做“交互原子化提取”：
+- 一条原始 bullet 或一个明确交互行为，原则上对应一条 requirement
+- 不允许把多个不同反馈方式合并成一条泛化 requirement
+- 以下内容默认视为独立 requirement：
+  - 动效或过渡
+  - Toast / modal / inline error
+  - 自动触发行为
+  - 自动消失或自动收起
+  - 推荐问题、快捷入口、欢迎态
+  - 预览区提前加载、并行加载、渐进展示
+
 ### 5. Write the Plan Only After Extraction Completes
 
 输出路径建议：
@@ -170,6 +208,11 @@ docs/03-technical-design-plans/{module}/design-plan.md
 
 章节骨架见 [references/templates.md](references/templates.md)。
 
+planner 还必须为 writer 额外整理：
+- 最终文档开头要列出的 `Referenced Inputs`（引用输入材料）
+- 最终文档需要直接呈现的交互覆盖结果
+- 哪些追踪字段只允许保留在 planner，不允许进入最终技术设计文档
+
 ## Quality Bar / 质量要求
 
 计划文档必须让后续 writer skill 在不重新通读全部上下文的情况下，也能稳定写出技术设计文档。
@@ -177,6 +220,7 @@ docs/03-technical-design-plans/{module}/design-plan.md
 如果出现以下情况，说明计划质量不够：
 - 只有标题，没有明确决策点
 - 没有把交互要求单独列出来
+- 把交互规格文档压成少量宽泛 requirement
 - 看不出哪些内容来自 PRD，哪些来自引用文档
 - 没有覆盖检查项
 - 没有标明未决问题和风险
@@ -195,6 +239,11 @@ docs/03-technical-design-plans/{module}/design-plan.md
 - 哪些内容仍然缺少架构层定义，writer 不得自行假设
 
 推荐写法：
-- `writer_must_cover`
-- `writer_must_not_assume`
-- `writer_open_questions`
+- `writer_must_cover`：writer 必须覆盖的内容
+- `writer_must_not_assume`：writer 不允许自行假设的内容
+- `writer_open_questions`：writer 还需要保留的开放问题
+
+还应包含：
+- `writer_referenced_inputs`：最终文档开头要列出的引用材料
+- `writer_planning_artifacts_to_hide`：最终文档里要隐藏的过程痕迹
+- `writer_final_interaction_coverage_shape`：最终文档里交互覆盖清单应该长什么样
