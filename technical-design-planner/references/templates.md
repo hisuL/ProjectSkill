@@ -68,7 +68,21 @@ change_log:
 - downstream_dependencies: 下游依赖
 - data_owner: 数据归属
 
-### 4.1 Dependency Contract Summary / 依赖契约摘要
+### 4.1 Page Ownership / 页面体验归属
+- page_owner_module:
+  - 如果交互稿描述的是完整页面、工作台或主用户旅程页面，必须指定唯一归属模块
+- page_owner_reason:
+  - 为什么该模块必须完整承载页面骨架
+- cross_module_frontend_experience_dependencies:
+  - 哪些模块提供局部能力
+  - 哪些能力必须在 `page_owner_module` 的 `page-design.md` 中统一描述
+
+要求：
+- 如果交互稿描述的是完整页面体验，这一节必须填写，不能省略
+- 同一页面骨架只能有一个 `page_owner_module`
+- 非 `page_owner_module` 的模块不应重复写完整页面骨架，只能引用该页面中的本模块职责片段
+
+### 4.2 Dependency Contract Summary / 依赖契约摘要
 | Dependency | Direction | Sync/Async | Initiator | Owner | Purpose | Delivery Prerequisite | Failure Responsibility |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 
@@ -82,7 +96,7 @@ change_log:
 - `Delivery Prerequisite`：交付前置条件
 - `Failure Responsibility`：失败后谁负责兜底
 
-### 4.2 Architecture Gaps / 架构缺口
+### 4.3 Architecture Gaps / 架构缺口
 - 缺失的交接字段:
 - 前端归属冲突:
 - 依赖责任不清:
@@ -179,6 +193,11 @@ change_log:
   - ...
 - writer_open_questions:
   - ...
+- page_owner_module:
+  - 完整页面骨架归属模块
+- cross_module_frontend_experience_dependencies:
+  - 哪些模块只提供局部能力
+  - 哪些页面效果必须在归属模块中统一写全
 - writer_architecture_gaps_to_respect:
   - ...
 - writer_referenced_inputs:
@@ -194,6 +213,8 @@ change_log:
   - 哪些页面/组件必须保留文字图、区域骨架或线框说明
   - 允许压缩到什么程度
   - 哪些结构绝对不能只写成一句抽象概述
+  - 哪些布局点必须逐项进入 `Layout And Regions`
+  - 哪些数值、时序、自动行为属于“缺一项即不通过”
 
 ## 11. Source Gap Check / 源文档漏项检查
 | Source | Source Section / Bullet | Planned Requirement ID | Status | Reason If Missing |

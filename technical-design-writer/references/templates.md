@@ -227,6 +227,16 @@ change_log:
 - 可压缩的是视觉修饰，不可压缩的是区域关系、主块级内容和关键控件组合
 - 如果产品文档已经明确给出布局骨架，这一节默认应忠实转写，而不是重新发明页面结构
 
+### 4.4 Fidelity-Critical Layout Commitments / 高保真布局承诺
+| Layout Commitment / 布局承诺 | Final Description / 最终实现描述 | Covered In / 落点位置 | If Not Covered, Why / 未覆盖原因 |
+| --- | --- | --- | --- |
+
+要求：
+- 这里必须逐项列出 source interaction spec 中“缺一项即失真”的布局与区域关系
+- 必须写最终结果本身，例如 `40/60 分栏`、`最小各 30%`、`右侧折叠窄条`、`底部固定输入区`、`顶部 ready 横幅 3 秒自动淡出`
+- 不要写 `Source Section`、`Requirement ID`、`Plan Ref`
+- 如果某项不在当前模块范围内，必须写清由哪个 `page_owner_module` 或其他文档承接
+
 ## 5. User Flow / 用户流程
 - 主流程
 - 分支流程
@@ -269,6 +279,8 @@ change_log:
 - 不要写 `Source Section`、`Requirement ID`、`Plan Ref`
 - 如果有未覆盖项，直接写缺口和原因
 - 这里用于确认“最终效果是否写进正文”，不是只确认“引用过 planner”
+- 这里至少要覆盖关键数值、自动行为、状态切换、反馈形式和跨区域交互链路
+- 如果这一节仍存在 fidelity-critical 缺项，不应结束交付
 ````
 
 ## Frontend Component Template / 前端组件模板
@@ -342,4 +354,5 @@ change_log:
 - 不要写 `Source Section`、`Requirement ID`、`Plan Ref`
 - 如果有未覆盖项，直接写缺口和原因
 - 这里检查的是“效果本身是否已经进入最终文档”，不是 planner 是否存在对应字段
+- 如果组件承接的是页面中的高保真交互片段，必须写清楚与页面骨架的对应关系
 ````

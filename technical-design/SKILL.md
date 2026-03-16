@@ -50,6 +50,7 @@ You MUST:
 3. require a completed planning document before entering writer
 4. use `technical-design-writer` only after planner handoff is complete
 5. run a final coverage check against the planning document before finishing
+6. if planner marks fidelity-critical page layout or interaction requirements, require writer to complete a final page-experience integrity check before finishing
 
 ## Workflow / 流程
 
@@ -68,6 +69,7 @@ You MUST:
 - 校验计划完整性
 - 生成正式技术设计文档
 - 做覆盖检查
+- 对 fidelity-critical 页面做完整性检查，不通过则回到 writer 修正
 
 ## Required Handoff / 必须交接的内容
 
@@ -82,8 +84,14 @@ You MUST:
 - `writer_must_cover`
 - `writer_must_not_assume`
 - `writer_open_questions`
+- `page_owner_module`（如果适用）
+- `cross_module_frontend_experience_dependencies`（如果适用）
 
 如果这些内容不完整，不要直接进入 writer。
+
+如果 planner 标记了 fidelity-critical 的页面骨架、状态变体或跨区域交互链路，入口 skill 还必须确认：
+- 归属模块的 `page-design.md` 已完整承接这些页面效果
+- 非归属模块没有用更弱的页面概述替代完整页面体验
 
 具体交接字段、交互提取粒度、布局保真要求等，统一以下游 skill 为准：
 - `technical-design-planner`

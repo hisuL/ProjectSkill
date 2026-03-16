@@ -33,6 +33,7 @@ You MUST:
 7. strip planning artifacts from the final technical design docs unless the user explicitly asks to keep them
 8. preserve planner-settled final decisions by translating them into direct implementation requirements in the final docs
 9. preserve source layout wireframes, textual diagrams, and region-level structure when the planner marks them as fidelity-critical, instead of collapsing them into abstract summary bullets
+10. do not finish if the coverage pass or reverse gap review finds missing fidelity-critical layout or interaction items
 </HARD-GATE>
 
 ## Scope / 使用范围
@@ -76,6 +77,7 @@ You MUST complete these steps in order:
 7. **Run coverage review / 做覆盖检查** - 确认 planner 要求没有遗漏
 8. **Run reverse gap review / 做反向漏项检查** - 确认源交互文档中的条目要么已映射，要么被明确排除
 9. **Handle incremental updates / 处理增量更新** - 已有文档时只更新变更章节
+10. **Stop on failed fidelity checks / 保真检查失败时停止交付** - 缺少页面骨架、关键数值、自动行为或交互链路时，不要结束
 
 ## Writing Rules / 写作规则
 
@@ -120,6 +122,7 @@ You MUST complete these steps in order:
 - 如果 planner 中的交互 requirement 是原子项，不允许在 writer 阶段重新合并成泛化描述
 - 如果 planner 标记某些页面布局、ASCII 文字图、线框图或区域结构为必须保真，最终文档必须保留等价的文字图、线框描述或分区级结构说明，不能压缩成一句“采用左右布局”
 - 如果产品阶段已经明确给出具体布局设计，writer 必须以“忠实转写”为默认策略；只有源材料没有给出对应设计时，才允许在稳定约束内补足
+- 如果 planner 已指定 `page_owner_module`，该模块的 `page-design.md` 必须完整承接页面骨架、主要状态变体和跨区域交互链路；其他模块不得只写一个更弱的“壳层页面摘要”来替代
 
 至少覆盖：
 - route / entry / permission
@@ -134,6 +137,7 @@ You MUST complete these steps in order:
 - 必须逐条映射关键 requirement
 - 不得只保留“大类状态切换”而丢掉具体效果
 - 对未落入当前模块的 requirement，必须在反向漏项检查里说明原因
+- 对布局保真项，必须先做一份内部“Layout Fidelity Mapping”，确认每个关键布局点最终落在哪一节；如果无法落位，不要结束
 
 这里的“逐条映射”是 writer 的内部约束，不代表最终文档必须展示 requirement ID 或来源节号。最终文档应该直接写成实现效果本身。
 
@@ -210,12 +214,14 @@ docs/03-technical-design/{module}/frontend/component-design.md
 - 异常、边界条件、依赖关系写清楚
 - 计划中的覆盖项没有遗漏
 - 交互规格文档中的关键条目要么已落到正文，要么在 gap review 中被明确排除
+- 如果存在 fidelity-critical 布局要求，已在 `Layout And Regions` 和交互覆盖清单中逐项落位
 
 以下情况视为失败：
 - 重新自由发挥，和计划文档脱节
 - 漏掉 planner 中的交互要求
 - 把 planner 中的原子交互 requirement 重新压扁成大类描述
 - 把交互文档中的文字图、线框图、布局骨架压成过短摘要，导致页面结构信息丢失
+- 覆盖检查发现缺项后仍然结束交付
 - 把 planner 的过程痕迹直接暴露给最终文档读者
 - 为了去掉过程痕迹，把 planner 已确定的最终决策结果一并删掉
 - 只写页面结构，不写行为和反馈

@@ -93,6 +93,7 @@ flowchart TD
 - 模块范围与角色
 - 对应的 `module_id`
 - 模块交接卡摘要
+- 页面体验归属（如果交互稿描述的是完整页面或工作台）
 - 输入材料清单
 - 最终文档应展示的引用材料清单
 - 约束摘要
@@ -124,6 +125,7 @@ flowchart TD
 - 不可丢失的结构关系（例如左右分栏、上下区域、固定底栏、折叠窄条）
 - 不可丢失的关键文案块和控件组合
 - writer 是否必须在最终页面设计里保留等价的文字图或结构化布局说明
+- 哪个模块必须完整承载该页面骨架，哪些模块只能引用而不能拆散它
 
 这些字段是给 writer 消费的中间信息，不要求最终技术设计文档逐列暴露。最终文档只需要展示对实现有价值的结果，不要把 planner 痕迹带进去。
 
@@ -163,6 +165,9 @@ flowchart TD
 - 如果一个 `work item` 覆盖多个模块，计划文档必须逐个模块拆开
 - `service` 只作为实现承载关系参考，不用于重新定义技术设计边界
 - 如果模块交接卡缺少前端归属、依赖责任或契约方向，应先标记缺口
+- 如果交互稿描述的是单一页面工作台或单一主用户旅程页面，planner 必须额外确定一个 `page_owner_module`
+- `page_owner_module` 必须负责保留完整页面骨架、主要状态变体和跨区域交互链路
+- 非 `page_owner_module` 的其他模块只能写本模块负责的页面片段或组件，不得把完整页面体验拆散后分别概述
 
 ### 3. Extract Decisions Instead of Freewriting / 提取决策而不是自由发挥
 
@@ -227,6 +232,7 @@ planner 还必须为 writer 额外整理：
 - 最终文档需要直接呈现的交互覆盖结果
 - 哪些追踪字段只允许保留在 planner，不允许进入最终技术设计文档
 - 哪些页面/组件必须保留文字图、线框图或区域级布局说明，避免被抽象成过短的摘要
+- 哪些页面效果必须由 `page_owner_module` 完整承接，哪些模块只允许交叉引用
 
 ## Quality Bar / 质量要求
 
@@ -258,6 +264,8 @@ planner 还必须为 writer 额外整理：
 - `writer_must_cover`：writer 必须覆盖的内容
 - `writer_must_not_assume`：writer 不允许自行假设的内容
 - `writer_open_questions`：writer 还需要保留的开放问题
+- `page_owner_module`：完整页面骨架的归属模块
+- `cross_module_frontend_experience_dependencies`：跨模块前端体验依赖，标明哪些模块提供局部能力，哪些模块必须保留完整页面叙述
 
 还应包含：
 - `writer_referenced_inputs`：最终文档开头要列出的引用材料
