@@ -44,11 +44,32 @@ change_log:
 ### 3.4 Delivery Constraints
 - ...
 
-## 4. Decision Log
+## 4. Architecture Handoff Summary
+- module_id:
+- module_name:
+- owner_domain:
+- delivery_scope:
+- frontend_surfaces:
+- ui_ownership_notes:
+- upstream_dependencies:
+- downstream_dependencies:
+- data_owner:
+
+### 4.1 Dependency Contract Summary
+| Dependency | Direction | Sync/Async | Initiator | Owner | Purpose | Delivery Prerequisite | Failure Responsibility |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+### 4.2 Architecture Gaps
+- 缺失的交接字段:
+- 前端归属冲突:
+- 依赖责任不清:
+- writer 不得自行假设的点:
+
+## 5. Decision Log
 | Decision ID | Topic | Options | Recommendation | Why |
 | --- | --- | --- | --- | --- |
 
-## 5. Frontend Interaction Requirements
+## 6. Frontend Interaction Requirements
 | ID | Source | Requirement | Affected Page/Component | Trigger | State Change | Feedback / Motion | Edge Cases |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 
@@ -56,18 +77,21 @@ change_log:
 - 是否存在前端交互依赖
 - 是否需要 writer 在跨模块章节里引用这些要求
 
-## 6. Risks And Open Questions
+## 7. Risks And Open Questions
 | Type | Detail | Blocking | Owner |
 | --- | --- | --- | --- |
 
-## 7. Writing Outline
+## 8. Writing Outline
 - backend/api-design.md:
 - backend/database-design.md:
 - backend/middleware-design.md:
 - frontend/page-design.md:
 - frontend/component-design.md:
 
-## 8. Coverage Checklist
+## 9. Coverage Checklist
+- [ ] 模块交接卡摘要已整理
+- [ ] 架构交接缺口已显式记录
+- [ ] 依赖契约最低粒度已补齐
 - [ ] PRD 约束已映射
 - [ ] 引用文档约束已映射
 - [ ] 前端交互要求已逐条记录
@@ -76,11 +100,13 @@ change_log:
 - [ ] 跨模块依赖已标注
 - [ ] 未决问题已列出
 
-## 9. Writer Handoff
+## 10. Writer Handoff
 - writer_must_cover:
   - ...
 - writer_must_not_assume:
   - ...
 - writer_open_questions:
+  - ...
+- writer_architecture_gaps_to_respect:
   - ...
 ````

@@ -24,19 +24,22 @@ change_log:
 - 目标
 - 不在范围内的内容
 - plan references:
+- architecture handoff references:
 
 ## 2. Inputs And Constraints
 - 来自 planner 的约束
 - 来自 planner 的决策点
+- 来自 architecture handoff 的边界和依赖
 - 依赖模块与前置条件
 
 ## 3. API Summary
-| API | Method | Path | Auth | Description | Plan Ref |
-| --- | --- | --- | --- | --- | --- |
+| API | Method | Path | Auth | Description | Plan Ref | Architecture Ref |
+| --- | --- | --- | --- | --- | --- | --- |
 
 ## 4. Detailed Endpoints
 ### 4.1 Create XXX
 - Plan refs:
+- Architecture refs:
 - Method / Path:
 - Purpose:
 - Request:
@@ -76,10 +79,11 @@ change_log:
 ## 1. Scope
 - 本文覆盖的实体和存储职责
 - plan references:
+- architecture handoff references:
 
 ## 2. Entity Overview
-| Entity | Purpose | Owner | Notes | Plan Ref |
-| --- | --- | --- | --- | --- |
+| Entity | Purpose | Owner | Notes | Plan Ref | Architecture Ref |
+| --- | --- | --- | --- | --- | --- |
 
 ## 3. Schema Design
 ### 3.1 `users`
@@ -127,14 +131,16 @@ change_log:
 ## 1. Scope
 - 涉及的中间件能力
 - plan references:
+- architecture handoff references:
 
 ## 2. Middleware Summary
-| Type | Resource | Purpose | Producer | Consumer | Plan Ref |
-| --- | --- | --- | --- | --- | --- |
+| Type | Resource | Purpose | Producer | Consumer | Plan Ref | Architecture Ref |
+| --- | --- | --- | --- | --- | --- | --- |
 
 ## 3. Event / Cache / Search Detail
 ### 3.1 `user.created`
 - Plan refs:
+- Architecture refs:
 - Trigger:
 - Payload:
 - Ordering:
@@ -175,10 +181,12 @@ change_log:
 - 角色与权限
 - 对应用户旅程
 - plan references:
+- architecture handoff references:
+- frontend surfaces:
 
 ## 2. Routes
-| Route | Entry | Permission | Description | Plan Ref |
-| --- | --- | --- | --- | --- |
+| Route | Entry | Permission | Description | Plan Ref | Architecture Ref |
+| --- | --- | --- | --- | --- | --- |
 
 ## 3. Layout And Regions
 - 页面区域
@@ -189,14 +197,15 @@ change_log:
 - 主流程
 - 分支流程
 - 失败回路
+- architecture touchpoints:
 
 ## 5. API Interaction
-| Stage | API | Trigger | Failure Handling | Plan Ref |
-| --- | --- | --- | --- | --- |
+| Stage | API | Trigger | Failure Handling | Plan Ref | Architecture Ref |
+| --- | --- | --- | --- | --- | --- |
 
 ## 6. Interaction Requirements Mapping
-| Requirement ID | Scenario | Trigger | State Change | Feedback / Motion | Error / Edge Handling |
-| --- | --- | --- | --- | --- | --- |
+| Requirement ID | Decision Ref | Architecture Ref | Scenario | Trigger | State Change | Feedback / Motion | Error / Edge Handling |
+| --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## 7. States
 - loading
@@ -210,6 +219,14 @@ change_log:
 - 埋点
 - 权限兜底
 - 降级策略
+
+## 9. Coverage Review
+- [ ] planner 中的交互要求已覆盖
+- [ ] planner 中的关键决策已映射
+- [ ] architecture handoff 中的前端归属已映射
+- [ ] architecture gaps 中禁止假设的点未被越权补写
+- [ ] loading / empty / error / success 已覆盖
+- [ ] 边界场景已覆盖
 ````
 
 ## Frontend Component Template
@@ -231,12 +248,13 @@ change_log:
 # Component Design
 
 ## 1. Component Map
-| Component | Responsibility | Parent | Depends On | Plan Ref |
-| --- | --- | --- | --- | --- |
+| Component | Responsibility | Parent | Depends On | Plan Ref | Architecture Ref |
+| --- | --- | --- | --- | --- | --- |
 
 ## 2. Detailed Components
 ### 2.1 `UserProfileForm`
 - Plan refs:
+- Architecture refs:
 - Purpose:
 - Props:
 - Local state:
@@ -251,8 +269,8 @@ change_log:
 - 服务端状态
 
 ## 4. Interaction Patterns
-| Requirement ID | Pattern | Trigger | Component Behavior | Feedback / Motion | Rollback / Retry |
-| --- | --- | --- | --- | --- | --- |
+| Requirement ID | Decision Ref | Architecture Ref | Pattern | Trigger | Component Behavior | Feedback / Motion | Rollback / Retry |
+| --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## 5. Accessibility And Edge Cases
 - 键盘操作
@@ -265,6 +283,8 @@ change_log:
 ## 7. Coverage Review
 - [ ] planner 中的交互要求已覆盖
 - [ ] planner 中的关键决策已映射
+- [ ] architecture handoff 中的前端归属已映射
+- [ ] architecture gaps 中禁止假设的点未被越权补写
 - [ ] loading / empty / error / success 已覆盖
 - [ ] 边界场景已覆盖
 ````
