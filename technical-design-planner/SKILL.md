@@ -32,6 +32,7 @@ You MUST:
 5. treat frontend interaction requirements as first-class inputs, not optional notes
 6. atomize interaction specs instead of collapsing them into broad summary bullets
 7. prepare writer-facing inputs without leaking planning artifacts into the final technical design docs
+8. preserve layout wireframes and region-level textual diagrams from source interaction docs as first-class planning inputs when they materially affect page or component design
 </HARD-GATE>
 
 ## Scope / 使用范围
@@ -118,6 +119,12 @@ flowchart TD
 - 异常、空态、加载态、权限态
 - 是否已在后续写作中强制覆盖
 
+如果交互文档包含 ASCII 文字图、线框图、区域分栏示意、状态面板示意或“页面长什么样”的文本骨架，还必须额外记录：
+- 该文字图对应的页面/区域
+- 不可丢失的结构关系（例如左右分栏、上下区域、固定底栏、折叠窄条）
+- 不可丢失的关键文案块和控件组合
+- writer 是否必须在最终页面设计里保留等价的文字图或结构化布局说明
+
 这些字段是给 writer 消费的中间信息，不要求最终技术设计文档逐列暴露。最终文档只需要展示对实现有价值的结果，不要把 planner 痕迹带进去。
 
 如果 PRD 或引用文档没有明确写交互效果，也要显式写明“未发现明确交互要求”，不要默默跳过。
@@ -130,7 +137,7 @@ flowchart TD
 
 ## Process / 处理流程
 
-### 1. Read Full Context First
+### 1. Read Full Context First / 先读完整上下文
 
 必须读取：
 - `docs/01-prd/PRD.md`
@@ -142,7 +149,7 @@ flowchart TD
 - 哪些文件真正影响后续技术设计
 - 哪些约束来自主文档，哪些来自引用材料
 
-### 2. Resolve Module Scope Before Extraction
+### 2. Resolve Module Scope Before Extraction / 提取前先收敛模块范围
 
 优先基于架构文档中的 `module_id`、模块交接卡和依赖契约摘要确定范围。
 
@@ -157,7 +164,7 @@ flowchart TD
 - `service` 只作为实现承载关系参考，不用于重新定义技术设计边界
 - 如果模块交接卡缺少前端归属、依赖责任或契约方向，应先标记缺口
 
-### 3. Extract Decisions Instead of Freewriting
+### 3. Extract Decisions Instead of Freewriting / 提取决策而不是自由发挥
 
 不要把计划文档写成散文。应结构化记录：
 - 已知约束
@@ -168,7 +175,7 @@ flowchart TD
 
 这些决策点是 planner 内部沉淀。writer 可以利用这些决策生成正文，但最终文档默认不应出现 `Decision ID`、`Plan Ref`、`Source Section` 之类过程痕迹，除非用户明确要求保留追踪信息。
 
-### 4. Treat Frontend Interaction as a Separate Track
+### 4. Treat Frontend Interaction as a Separate Track / 把前端交互当作独立主线
 
 对 frontend 或 `both` 场景，必须单独抽取：
 - 用户旅程中的关键动作
@@ -198,7 +205,14 @@ flowchart TD
   - 推荐问题、快捷入口、欢迎态
   - 预览区提前加载、并行加载、渐进展示
 
-### 5. Write the Plan Only After Extraction Completes
+如果源材料提供了文字图或页面骨架，还必须做“布局骨架保真提取”：
+- 不要只总结成“左右布局”“有欢迎态”这类抽象描述
+- 应拆出独立 requirement 或单独摘要，保留原始区域关系和主要块级内容
+- 对影响实现理解的文字图，writer 交接中必须明确要求在 `page-design.md` 或 `component-design.md` 中保留等价文字图、线框描述或区域级结构说明
+- 若判断某个文字图可不原样进入最终文档，必须说明删减原因和保留的结构要点
+- 默认原则是“产品已明确，writer 不得自由发挥”；只有源材料没有提供对应布局设计时，后续阶段才允许在不违反已知约束的前提下补足
+
+### 5. Write the Plan Only After Extraction Completes / 提取完成后再写计划
 
 输出路径建议：
 
@@ -212,6 +226,7 @@ planner 还必须为 writer 额外整理：
 - 最终文档开头要列出的 `Referenced Inputs`（引用输入材料）
 - 最终文档需要直接呈现的交互覆盖结果
 - 哪些追踪字段只允许保留在 planner，不允许进入最终技术设计文档
+- 哪些页面/组件必须保留文字图、线框图或区域级布局说明，避免被抽象成过短的摘要
 
 ## Quality Bar / 质量要求
 
@@ -221,6 +236,7 @@ planner 还必须为 writer 额外整理：
 - 只有标题，没有明确决策点
 - 没有把交互要求单独列出来
 - 把交互规格文档压成少量宽泛 requirement
+- 交互文档中的文字图、布局骨架、区域关系在计划里消失，只剩抽象概述
 - 看不出哪些内容来自 PRD，哪些来自引用文档
 - 没有覆盖检查项
 - 没有标明未决问题和风险
@@ -247,3 +263,4 @@ planner 还必须为 writer 额外整理：
 - `writer_referenced_inputs`：最终文档开头要列出的引用材料
 - `writer_planning_artifacts_to_hide`：最终文档里要隐藏的过程痕迹
 - `writer_final_interaction_coverage_shape`：最终文档里交互覆盖清单应该长什么样
+- `writer_layout_fidelity_requirements`：最终文档哪些章节必须保留文字图、布局骨架、区域级说明，以及允许抽象到什么程度

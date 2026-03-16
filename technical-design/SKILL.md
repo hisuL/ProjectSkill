@@ -8,31 +8,35 @@ agent: Plan
 
 # Technical Design / 技术设计
 
-这是一个兼容入口 skill，用于承接原来的 `technical-design` 使用方式。它本身不再承载完整流程，而是把工作显式拆成两个阶段：
+这是一个入口 skill，用于兼容用户直接说 `technical-design` 的调用方式。
 
-1. 先用 `technical-design-planner`
-2. 再用 `technical-design-writer`
+它本身不负责承载具体业务约束、交互提取规则或正文写作细则，这些内容分别由：
 
-这样做的目的，是把 PRD、架构设计、引用文档里的约束和前端交互要求先固化成计划文档，再基于该计划稳定生成正式技术设计，避免在长链路写作中丢上下文。
+1. `technical-design-planner`
+2. `technical-design-writer`
+
+负责。
+
+这个 skill 的职责只有一件事：按正确流程触发前后两个阶段，并确保它们之间的交接完整。
 
 ## Terms / 术语说明
 
-- `compatibility entry`：兼容入口，指保留旧调用方式，但内部改成新流程
-- `planner`：技术设计计划阶段，用来沉淀约束、决策点和交互要求
-- `writer`：技术设计写作阶段，用来把 plan 转成正式文档
-- `module_id`：模块唯一标识，是技术设计最小消费单元
-- `handoff`：交接信息，指 planner 交给 writer 的结构化中间产物
-- `coverage check`：覆盖检查，确认 plan 里的要求都进入了最终文档
+- `entry skill`：入口 skill，只负责流程编排，不负责承载详细业务规则
+- `planner`：计划阶段，用来先生成技术设计写入计划
+- `writer`：写作阶段，用来根据计划生成正式技术设计文档
+- `module_id`：技术设计的最小消费单元
+- `handoff`：planner 交给 writer 的结构化中间产物
 
 ## When To Use / 何时使用
 
 **Use this skill when**:
-- 用户仍然习惯直接说 `technical-design`
-- 需要从 PRD 和架构设计出发，最终产出模块级技术设计文档
-- 希望由兼容入口自动引导到新的两段式流程
+- 用户直接说 `technical-design`
+- 用户希望从 PRD / 架构文档出发，最终得到技术设计文档
+- 用户没有明确说明只做 planner 还是只做 writer
 
 **Do NOT use this skill for**:
-- 跳过计划阶段直接写正式技术设计
+- 替代 `technical-design-planner` 的具体分析规则
+- 替代 `technical-design-writer` 的具体写作规则
 - 替代架构设计
 - 直接拆实现任务
 
@@ -42,52 +46,48 @@ Do NOT write final technical design docs immediately after reading source docs.
 
 You MUST:
 1. enter Plan mode first
-2. use `technical-design-planner` to produce `docs/03-technical-design-plans/{module}/design-plan.md`
-3. treat architecture module handoff cards and dependency contract summaries as the primary boundary input
-4. ensure the plan explicitly records frontend interaction requirements and decision points
-5. use `technical-design-writer` to write final docs from the plan
-6. run a final coverage check against the plan before finishing
+2. run `technical-design-planner` before `technical-design-writer`
+3. require a completed planning document before entering writer
+4. use `technical-design-writer` only after planner handoff is complete
+5. run a final coverage check against the planning document before finishing
 
-## Compatibility Workflow / 兼容流程
-
-把这个 skill 当作一个 `orchestrator`（流程编排入口）：
+## Workflow / 流程
 
 ### Phase 1: Planning / 第一阶段：计划沉淀
 
-调用 `technical-design-planner`，完成：
-- 读取 PRD、架构文档、引用文档和图片
-- 优先解析模块交接卡、依赖契约摘要和工作项清单
-- 以 `module_id` 为唯一消费单元收敛模块和角色
-- 提取约束、决策点、风险、未决问题
-- 单独提取 `Frontend Interaction Requirements`
-- 生成 `design-plan.md`（技术设计写入计划）
+调用 `technical-design-planner`：
+- 读取输入材料
+- 收敛模块范围
+- 生成 `design-plan.md`
+- 准备 writer handoff
 
 ### Phase 2: Writing / 第二阶段：正式写作
 
-调用 `technical-design-writer`，完成：
+调用 `technical-design-writer`：
 - 读取 `design-plan.md`
 - 校验计划完整性
-- 把计划中的约束和决策写入正式技术设计文档
-- 把前端交互要求映射进 `page-design.md` / `component-design.md`
-- 做覆盖检查，确认没有漏掉 planner 中的要求
+- 生成正式技术设计文档
+- 做覆盖检查
 
 ## Required Handoff / 必须交接的内容
 
 从 planner 到 writer，至少要有这些内容：
 - 模块范围与角色
 - 对应的 `module_id`
-- 模块交接卡摘要
-- 依赖契约摘要
 - 输入材料清单
 - 约束摘要
 - 决策点清单
 - 风险与待确认问题
-- `Frontend Interaction Requirements`
+- `Frontend Interaction Requirements`（如果适用）
 - `writer_must_cover`
 - `writer_must_not_assume`
 - `writer_open_questions`
 
 如果这些内容不完整，不要直接进入 writer。
+
+具体交接字段、交互提取粒度、布局保真要求等，统一以下游 skill 为准：
+- `technical-design-planner`
+- `technical-design-writer`
 
 ## Output Paths / 输出路径
 
@@ -111,34 +111,25 @@ docs/03-technical-design/{module}/frontend/component-design.md
 
 如果用户说：
 - “先整理计划” 或 “先沉淀决策点”
-  直接使用 `technical-design-planner`
+  - 直接使用 `technical-design-planner`
 - “根据计划写正式文档”
-  直接使用 `technical-design-writer`
+  - 直接使用 `technical-design-writer`
 - “technical-design” 但没有说明阶段
-  默认先 planner 再 writer
+  - 默认先 planner 再 writer
 
-## Boundary Rules / 边界规则
+## Orchestration Rules / 编排规则
 
-`technical-design` 必须优先消费架构文档中的：
-- 模块交接卡
-- 依赖契约摘要
-- 工作项清单
+- `technical-design` 是流程入口，不应重复定义 planner / writer 已经拥有的详细规则
+- 具体业务约束、交互提取、布局保真、正文质量要求，以下游 skill 为准
+- 如果 planner 和 writer 的规则发生演进，入口 skill 不需要重复复制这些细节，只需要保证调用顺序正确
 
-并遵守这些规则：
-- 技术设计的最小单元始终是 `module_id`
-- 不要把 `work item` 直接当成目录名或重新解释成新模块
-- 不要按 `service` 重新拆分技术设计边界
-- 如果架构交接信息不足，应回补 `architecture-design`，而不是在技术设计阶段自由重定义边界
+## Why This Skill Exists / 为什么保留这个 skill
 
-## Why This Split Exists / 为什么拆成两段
-
-原来的单 skill 流程容易在正式写作阶段丢掉前期已识别的约束，尤其是前端交互效果、状态反馈和引用文档中的体验要求。
-
-现在的兼容入口必须坚持这个原则：
+保留它的原因不是为了重复定义技术设计规则，而是为了维持旧调用方式不变：
 
 ```text
-先固化计划，再生成文档
-先记录交互要求，再落前端设计
+用户继续说 technical-design
+内部仍然先 planner，再 writer
 ```
 
-如果用户明确要求保留旧调用方式，这个 skill 应该维持调用体验不变，但内部仍遵循新流程。
+也就是说，这个 skill 负责“流程入口兼容”，不是“业务规则主定义”。

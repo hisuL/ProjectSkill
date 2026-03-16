@@ -32,6 +32,7 @@ You MUST:
 6. run a reverse gap check against the source interaction spec when the plan includes one
 7. strip planning artifacts from the final technical design docs unless the user explicitly asks to keep them
 8. preserve planner-settled final decisions by translating them into direct implementation requirements in the final docs
+9. preserve source layout wireframes, textual diagrams, and region-level structure when the planner marks them as fidelity-critical, instead of collapsing them into abstract summary bullets
 </HARD-GATE>
 
 ## Scope / 使用范围
@@ -78,13 +79,13 @@ You MUST complete these steps in order:
 
 ## Writing Rules / 写作规则
 
-### 1. Consume the Plan, Do Not Re-discover It
+### 1. Consume the Plan, Do Not Re-discover It / 消费计划，不要重新推导
 
 写作时必须优先按计划文档的这些章节展开：
 - `Constraints Summary`
 - `Decision Log`
 - `Frontend Interaction Requirements`
-- `Risks And Open Questions`
+- `Risks And Open Questions`（风险与待确认问题）
 - `Writer Handoff`
 
 如果某个设计点在计划文档中不存在，不要默默补一个“看起来合理”的方案。应：
@@ -110,13 +111,15 @@ You MUST complete these steps in order:
 - 去掉的是“这个结论来自哪里”的标签
 - 保留的是“这个结论本身”
 
-### 2. Frontend Interaction Must Become Design Content
+### 2. Frontend Interaction Must Become Design Content / 前端交互必须进入设计正文
 
 对于 `frontend` 或 `both`：
 - 交互要求必须进入 `page-design.md` 和 / 或 `component-design.md`
 - 不允许只写成一句“支持交互反馈”
 - 必须落到触发条件、状态变化、反馈方式、异常处理、动效或过渡策略
 - 如果 planner 中的交互 requirement 是原子项，不允许在 writer 阶段重新合并成泛化描述
+- 如果 planner 标记某些页面布局、ASCII 文字图、线框图或区域结构为必须保真，最终文档必须保留等价的文字图、线框描述或分区级结构说明，不能压缩成一句“采用左右布局”
+- 如果产品阶段已经明确给出具体布局设计，writer 必须以“忠实转写”为默认策略；只有源材料没有给出对应设计时，才允许在稳定约束内补足
 
 至少覆盖：
 - route / entry / permission
@@ -139,17 +142,24 @@ You MUST complete these steps in order:
 - ready 横幅 3 秒自动淡出
 - 推荐问题首次发送后收起
 - 点击引用后高亮呼吸闪烁 3 次
+- 页面布局文字图中左栏承载欢迎态/消息列表，右栏承载 PDF 预览，底栏固定输入区
 
 而不是：
 - `覆盖要求：F-CW-02`
 - `来源：D-CW-03`
 
-### 3. Final Docs Should Show Results, Not Planning Process
+### 3. Final Docs Should Show Results, Not Planning Process / 最终文档展示结果，不展示过程
 
 默认情况下，最终技术设计文档应直接表达：
 - 页面或组件最终要实现什么
 - 关键交互效果是什么
 - 哪些约束来自哪些输入材料
+
+这里的“直接表达结果”不等于“把所有内容压缩成几句摘要”。如果交互源文档里的文字图、线框图、区域结构本身就是实现沟通的重要信息，最终技术设计应保留它们的等价表达，例如：
+- ASCII 文字图
+- 区域级布局骨架
+- 状态面板示意
+- 首屏/折叠态/展开态的结构化描述
 
 不要把它写成 planner 的回放记录。除非用户明确要求保留追踪信息，否则不要在最终文档里展示：
 - `来源：D-03`
@@ -161,7 +171,7 @@ You MUST complete these steps in order:
 
 但引用材料清单也不应替代正文里的最终结论。不要把“已引用某文档”误当作“已经把该文档里的决策写进正文”。
 
-### 4. Update Incrementally
+### 4. Update Incrementally / 增量更新
 
 如果目标文件已存在，不要整篇重写。必须：
 1. 读取旧版本
@@ -196,6 +206,7 @@ docs/03-technical-design/{module}/frontend/component-design.md
 - 如果引用其他文档，文档开头有清晰的 `Referenced Inputs`
 - planner 已收敛的最终决策结果已转写进正文
 - 前端交互要求不是附注，而是正文的一部分
+- 如果源交互文档含有关键文字图或线框结构，最终文档保留了等价的布局骨架说明，没有被压缩丢失
 - 异常、边界条件、依赖关系写清楚
 - 计划中的覆盖项没有遗漏
 - 交互规格文档中的关键条目要么已落到正文，要么在 gap review 中被明确排除
@@ -204,6 +215,7 @@ docs/03-technical-design/{module}/frontend/component-design.md
 - 重新自由发挥，和计划文档脱节
 - 漏掉 planner 中的交互要求
 - 把 planner 中的原子交互 requirement 重新压扁成大类描述
+- 把交互文档中的文字图、线框图、布局骨架压成过短摘要，导致页面结构信息丢失
 - 把 planner 的过程痕迹直接暴露给最终文档读者
 - 为了去掉过程痕迹，把 planner 已确定的最终决策结果一并删掉
 - 只写页面结构，不写行为和反馈

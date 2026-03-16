@@ -141,7 +141,7 @@ flowchart TD
 
 ## The Process / 详细流程
 
-### 1. Enter Plan Mode First
+### 1. Enter Plan Mode First / 先进入计划模式
 
 必须先进入 Plan 模式，再开始任何架构推演或问题确认。
 
@@ -150,7 +150,7 @@ Do not:
 - 在普通对话流里一次问完所有问题
 - 在尚未确认关键决策前落盘
 
-### 2. Read the Full Input Surface
+### 2. Read the Full Input Surface / 读取完整输入面
 
 必须读取：
 - `docs/01-prd/PRD.md`
@@ -165,7 +165,7 @@ Do not:
 
 不要把图片或引用文档当成“可选补充材料”。如果被引用，它们就是输入的一部分。
 
-### 3. Confirm Decisions in Stages
+### 3. Confirm Decisions in Stages / 分阶段确认决策
 
 像 `brainstorming`（头脑风暴式讨论）一样分阶段推进，不要把所有决策揉成一轮问答。
 
@@ -178,7 +178,7 @@ Do not:
 
 优先确认以下四类关键决策。
 
-### 4. Business Domains
+### 4. Business Domains / 业务域划分
 
 识别系统的业务域，并提供 2-3 种划分方式，例如：
 - 更贴近业务能力的划分
@@ -192,7 +192,7 @@ Do not:
 
 如果 PRD 范围明显过大，先帮助用户拆成多个子项目或阶段，再继续当前 skill 的架构设计。
 
-### 5. Service or Module Boundaries
+### 5. Service or Module Boundaries / 服务或模块边界
 
 在确认业务域后，再讨论微服务或模块边界。
 
@@ -210,7 +210,7 @@ Do not:
 
 推荐默认方向时，避免“为了看起来高级而过度拆分”。
 
-### 6. Technology Choices
+### 6. Technology Choices / 技术选型
 
 从 `research.md` 提取候选技术，不要凭空发散。
 
@@ -228,7 +228,7 @@ Do not:
 
 不要下沉到详细 API 或表结构。
 
-### 7. Core Flows and Failure Paths
+### 7. Core Flows and Failure Paths / 核心流程与异常路径
 
 识别最关键的业务流程，并输出 Mermaid 图。
 
@@ -240,7 +240,7 @@ Do not:
 
 如果存在多个核心流程，优先覆盖对架构影响最大的那几个，而不是试图穷举全部流程。
 
-### 8. Module Handoff Cards
+### 8. Module Handoff Cards / 模块交接卡
 
 在写架构文档前，必须先为每个后续技术设计单元产出模块交接卡。
 
@@ -278,7 +278,7 @@ Do not:
 - 哪些跨模块协作会直接影响前端交互设计
 - 如果前端归属不明确，要在交接卡中显式标注 open question，而不是留给 `technical-design` 猜测
 
-### 9. Write the Document Only After Confirmation
+### 9. Write the Document Only After Confirmation / 确认完成后再写文档
 
 完成所有关键决策确认后：
 1. 结束计划阶段，进入写作阶段
@@ -289,7 +289,7 @@ Do not:
 
 ## Document Requirements / 文档要求
 
-### YAML Frontmatter
+### YAML Frontmatter / YAML 头信息
 
 ```yaml
 ---
@@ -370,7 +370,7 @@ change_log:
 
 如果某类内容对当前项目不重要，可以简写或省略，但不要用 API 设计或数据库表结构去填充文档长度。
 
-### Module List Format
+### Module List Format / 模块清单格式
 
 供后续 `technical-design` 解析的模块清单必须和模块交接卡保持一致，建议使用下面格式：
 
@@ -389,7 +389,7 @@ change_log:
 - `module_id` 必须与模块交接卡中的 `module_id` 完全一致
 - 工作项清单描述交付边界，模块交接卡描述消费契约
 
-## Red Flags
+## Red Flags / 风险信号
 
 出现以下任一情况，立即停止并回到正确流程：
 - 没有进入 Plan 模式
@@ -405,7 +405,7 @@ change_log:
 
 这些都不是捷径，而是架构失误的前兆。
 
-## Guiding Principles
+## Guiding Principles / 指导原则
 
 - **先理解输入，再给方案**：架构设计要以 PRD、research、引用材料为边界
 - **一次只推进一个决策块**：减少误解，方便修正
